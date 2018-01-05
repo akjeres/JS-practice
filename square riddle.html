@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Square Riddle</title>
+	<style type="text/css">
+		table {
+			border-collapse: collapse;
+			border-color: black;
+		}
+		td {
+			text-align: center;
+			vertical-align: middle;
+			min-width: 40px;
+			height: 40px;
+		}
+		.start, .finish {
+			background-color: yellow;
+		}
+		.touched {
+			background-color: red;
+		}
+		.hidden {
+			display: none;
+		}
+		table {
+			margin: 0 auto;
+		}
+		div {
+			margin: 0 auto;
+			text-align: center;
+			max-width: 360px;
+		}
+	</style>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+	<div >
+		<p>You have to pave the way from "In" to "Out" in that way, when the sum of all the selected cells equals 100. You may point the next cells only from the right or from the bottom of previous one. Have fun!
+			<br/>
+			<button>Understand</button></p>
+	</div>
+	<table border="1" class="hidden">
+		<tr>
+			<td class = "start touched" id = "c0">In</td>
+			<td id = "c1">29</td>
+			<td id = "c2">11</td>
+			<td id = "c3">27</td>
+			<td id = "c4">13</td>
+		</tr>
+		<tr>
+			<td id = "c10">12</td>
+			<td id = "c11">7</td>
+			<td id = "c12">18</td>
+			<td id = "c13">28</td>
+			<td id = "c14">15</td>
+		</tr>
+		<tr>
+			<td id = "c20">9</td>
+			<td id = "c21">1</td>
+			<td id = "c22">7</td>
+			<td id = "c23">11</td>
+			<td id = "c24">27</td>
+		</tr>
+		<tr>
+			<td id = "c30">10</td>
+			<td id = "c31">27</td>
+			<td id = "c32">16</td>
+			<td id = "c33">4</td>
+			<td id = "c34">9</td>
+		</tr>
+		<tr>
+			<td id = "c40">21</td>
+			<td id = "c41">9</td>
+			<td id = "c42">9</td>
+			<td id = "c43">3</td>
+			<td class = "finish" id = "c44">Out</td>
+		</tr>
+		<tr>
+			<td class = "t_footer" colspan = "2">Sum:</td>
+			<td class = "t_footer" colspan = "3" id = "result">0</td>
+		</tr>
+	</table>
+	<script type="text/javascript">
+		$("button").click(function() {
+			$(this).parent().addClass("hidden");
+			$("table").removeClass("hidden");
+		});
+		var counter = 0;
+		$( "td" ).click(function() {
+			var incr_counter = (parseInt($(this).attr("id").substr(1)));
+			if (!($(this).hasClass("touched")) && !($(this).hasClass("finish")) && !($(this).hasClass("t_footer")) &&
+				((incr_counter - counter == 10) || (incr_counter - counter == 1))
+				) {
+			$(this).addClass("touched");
+			var result = parseInt($("#result").text());
+			result += parseInt($(this).text());
+			$("#result").html(result);
+			counter = incr_counter;
+			}
+		});
+		$(".finish").click(function() {
+			if (($("#c43").hasClass("touched")) || ($("#c34").hasClass("touched"))) {
+				if (parseInt($("#result").text())  == 100) {
+					alert("Congrats! You've won.");
+				} else {
+					alert("Almost! Try again.");	
+				}
+				location.reload();
+			}
+		});
+/*		var field = [
+			[0, 1],
+			[2, 3]
+		];
+		var field = [
+			[0, 29, 11, 27, 13],
+			[12, 7, 18, 28, 15],
+			[9, 1, 7, 11, 27],
+			[10, 27, 16, 4, 9],
+			[21, 9, 9, 3, 0]
+		];
+		for (let i = 0; i < field.length; i++) {
+			for (let j = 0; j < field[i].length; j++) {
+				console.log(field[i][j]);
+			}
+		}
+		var initial_cell = [0, 0, [field[0][0]]];
+		function step_right (position_arr) {
+			var row = position_arr[0];
+			var col = position_arr[1];
+			var sum = position_arr[2];
+			if (col < field[row].length - 1) {
+				col++;
+				sum.push(field[row][col]);
+			}
+
+			return ([row, col, sum]);
+		}
+		function step_down (position_arr) {
+			var row = position_arr[0];
+			var col = position_arr[1];
+			var sum = position_arr[2];
+			if (row < field.length - 1) {
+				row++;
+				sum.push(field[row][col]);
+			}
+
+			return ([row, col, sum]);
+		}
+//		console.log(get_sum(step_down(step_right(initial_cell))[2]));
+		//field.right();
+		/*function next_step(field, position_arr) {
+			var sum_0 = position_arr[2].slice();
+			var sum_1 = position_arr[2].slice();
+			var row = position_arr[0];
+			var col = position_arr[1];
+			if ((row < field.length - 1) &&
+			(col < field[row].length - 1)) {
+				sum_0.push(field[row][col + 1]);
+				sum_1.push(field[row + 1][col]);
+				var result = [[field, [row, col + 1, sum_0]],
+							  [field, [row + 1, col, sum_1]]];
+			}
+			else if ((row < field.length - 1) &&
+			(col == field[row].length - 1)) {
+				sum_1.push(field[row + 1][col]);
+				var result = [field, [row + 1, col, sum_1]];
+			}
+			else if ((row == field.length - 1) &&
+			(col < field[row].length - 1)) {
+				sum_0.push(field[row][col + 1]);
+				var result = [field, [row, col + 1, sum_0]];
+			}
+			else var result = [field, position_arr];
+			
+
+			return result;
+		}*/
+		/*function next_step(field, position_arr) {
+			var sum_0 = position_arr[2].slice();
+			var sum_1 = position_arr[2].slice();
+			var row = position_arr[0];
+			var col = position_arr[1];
+			if ((row < field.length - 1) &&
+			(col < field[row].length - 1)) {
+				sum_0.push(field[row][col + 1]);
+				sum_1.push(field[row + 1][col]);
+				var result = [[row, col + 1, sum_0],
+							  [row + 1, col, sum_1]];
+			}
+			else if ((row < field.length - 1) &&
+			(col == field[row].length - 1)) {
+				sum_1.push(field[row + 1][col]);
+				var result = [row + 1, col, sum_1];
+			}
+			else if ((row == field.length - 1) &&
+			(col < field[row].length - 1)) {
+				sum_0.push(field[row][col + 1]);
+				var result = [row, col + 1, sum_0];
+			}
+			else var result = position_arr;
+			
+
+			return result;
+		}
+		function get_sum (arr) {
+			var result = 0;
+			for (var i = 0; i < arr.length; i++) {
+				if (arr[i] == null) continue;
+				result += arr[i];
+			}
+			return result;
+		}
+
+		console.log(next_step(field, [1, 0, [field[1][0]]]));
+*/
+	</script>
+</body>
+</html>
