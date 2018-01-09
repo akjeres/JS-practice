@@ -100,6 +100,7 @@
 			$("#playground").removeClass("hidden");
 		});
 		var counter = 0;
+		var flag = true;
 		$( "td" ).click(function() {
 			var incr_counter = (parseInt($(this).attr("id").substr(1)));
 			if (!($(this).hasClass("touched")) && !($(this).hasClass("finish")) && !($(this).hasClass("t_footer")) &&
@@ -112,7 +113,7 @@
 			counter = incr_counter;
 			}
 		});
-		$(".finish").click(function() {
+		function checkOut() {
 			if (($("#c43").hasClass("touched")) || ($("#c34").hasClass("touched"))) {
 				if (parseInt($("#result").text())  == 100) {
 					alert("Congrats! You've won.");
@@ -122,7 +123,11 @@
 				}
 				$(".button_div").removeClass("hidden");
 				$("table").addClass("hidden");
+				$("#again").focus();
 			}
+		}
+		$(".finish").click(function() {
+			checkOut();
 		});
 		$("#new_map").click(function() {
 			location.reload();
@@ -133,6 +138,7 @@
 			$("td").removeClass("touched");
 			$("#c0").addClass("touched");
 			counter = 0;
+			flag = true;
 			$("#result").html(0);
 		});
 
@@ -184,6 +190,44 @@
 				let path = "#c" + cell;
 				$(path).html(path_arr[i]);
 			}
+
+			//Keyboard control Events Start
+			function manual_step() {
+				let result = parseInt($("#result").text());
+	                   	let new_cell = "#c"+counter;
+						result += parseInt($(new_cell).text());	
+						$("#result").html(result);
+						flag = false;
+						checkOut();
+						$(new_cell).addClass("touched");
+			}
+			$( document ).keydown(
+	            function( e ){
+	                if( e.keyCode == 39 && flag 
+	                	&& !($("table").hasClass("hidden"))
+	                	&& !($("#playground").hasClass("hidden"))
+	                	&& (counter % 10 < 4)) {
+	                	counter += 1;
+	                   	manual_step();
+	                }
+	            });
+	        $( document ).keydown(
+	            function( e ){
+	                if( e.keyCode == 40 && flag 
+	                	&& !($("table").hasClass("hidden"))
+	                	&& !($("#playground").hasClass("hidden"))
+	                	&& (counter < 40)){
+	                	counter += 10;
+	                   	manual_step();	                    
+	                }
+	            });
+	        $( document ).keyup(
+	            function( e ){
+	                if( e.keyCode == 39 ||  e.keyCode == 40){
+	                    flag = true;
+	                }
+	        });
+			//Keyboard control Events End
 		});
 	</script>
 </body>
