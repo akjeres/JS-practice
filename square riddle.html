@@ -195,11 +195,17 @@
 			function manual_step() {
 				let result = parseInt($("#result").text());
 	                   	let new_cell = "#c"+counter;
-						result += parseInt($(new_cell).text());	
-						$("#result").html(result);
-						flag = false;
-						checkOut();
-						$(new_cell).addClass("touched");
+						//result += parseInt($(new_cell).text());
+						if ($(new_cell).text() == parseInt($(new_cell).text())) {
+							result += parseInt($(new_cell).text());
+							$("#result").html(result);
+							flag = false;
+							checkOut();
+							$(new_cell).addClass("touched");
+						} else {
+							flag = false;
+							checkOut();
+						}	
 			}
 			$( document ).keydown(
 	            function( e ){
@@ -225,6 +231,7 @@
 	            function( e ){
 	                if( e.keyCode == 39 ||  e.keyCode == 40){
 	                    flag = true;
+	                    //checkOut();
 	                }
 	        });
 			//Keyboard control Events End
