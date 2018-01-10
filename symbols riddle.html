@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Symbols Riddle</title>
+</head>
+<body>
+	<script>
+		function generate_definitions() {
+			var definition_arr = [Math.round(Math.random()*8 + 1)];
+			var right_cells = Math.round(Math.random()*5);
+			for (let i = 1; i <= right_cells; i++) {
+				if (definition_arr[definition_arr.length - 1] < 9) {
+					definition_arr.push(definition_arr[definition_arr.length - i] + i);
+				}
+			}
+			var left_cells = 6 - definition_arr.length;
+			for (let i = 0; i < left_cells; i++) {
+				if (definition_arr[0] > 1) {
+					definition_arr.unshift(definition_arr[0] - 1);
+				} else {
+					definition_arr.push(definition_arr[definition_arr.length - 1] + 1);
+				}
+			}
+
+			return definition_arr;
+		}
+
+		function compareRandom(a, b) {
+		  return Math.random() - 0.5;
+		}
+		function unique(arr) {
+				var obj = {};
+				for (var i = 0; i < arr.length; i++) {
+					var str = arr[i];
+					obj[str] = true;
+				}
+
+				return Object.keys(obj);
+			}
+		function generate_task() {
+			var input_arr = generate_definitions().sort(compareRandom);		
+			var all_comands = ["+", "-", "*", "/"];
+			var comand_arr = all_comands.slice().sort(compareRandom);
+			comand_arr.push(all_comands[Math.round(Math.random()*3)]);
+			var result = eval(input_arr[0]+comand_arr[0]+input_arr[1]+comand_arr[1]+
+										input_arr[2]+comand_arr[2]+input_arr[3]+comand_arr[3]+
+										input_arr[4]+comand_arr[4]+input_arr[5]);
+			if (result == parseInt(result)) {
+				document.write("<p>" + input_arr[0] + " ? " + input_arr[1]  + " ? "+ input_arr[2]  + " ? " + input_arr[3] + " ? " + input_arr[4] + " ? " + input_arr[5] + " = " + result + "</p>");
+			} else {
+				location.reload();
+			}
+		}
+		function solve_string(txt) {
+			var input_arr = txt.split(" ? ");
+			var last_definition = input_arr[input_arr.length - 1].split(" = ");
+			var result = parseInt(last_definition[1]);
+			var comand_arr = ["+", "-", "*", "/"];
+			var replace_arr = ["+", "-", "&times;", "&divide;"];
+			input_arr[input_arr.length - 1] = last_definition[0];
+			
+			for (let i = 0; i < comand_arr.length; i++) {
+				for (let j = 0; j < comand_arr.length; j++) {
+					for (let k = 0; k < comand_arr.length; k++) {
+						for (let l = 0; l < comand_arr.length; l++) {
+							for (let m = 0; m < comand_arr.length; m++) {
+								if (eval(input_arr[0]+comand_arr[i]+input_arr[1]+comand_arr[j]+
+										input_arr[2]+comand_arr[k]+input_arr[3]+comand_arr[l]+
+										input_arr[4]+comand_arr[m]+input_arr[5]) == result &&
+									unique([comand_arr[i], comand_arr[j], comand_arr[k], comand_arr[l], comand_arr[m]]).length == 4) {
+									document.write("<p>"+input_arr[0]+" "+replace_arr[i]+" "+input_arr[1]+" "+replace_arr[j]+" "+input_arr[2]+" "+replace_arr[k]+" "+input_arr[3]+" "+replace_arr[l]+" "+input_arr[4]+" "+replace_arr[m]+" "+input_arr[5]
+										+" = "+result+"</p>");
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		generate_task();
+		var txt = document.getElementsByTagName("p")[0].innerHTML;
+		solve_string(txt);
+	</script>
+</body>
+</html>

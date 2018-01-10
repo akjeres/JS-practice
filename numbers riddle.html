@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Numbers Riddle</title>
+</head>
+<body>
+	
+	<p>AB - C = DE &divide; F = GH &times; I</p>
+	<script>
+		var A, B, C, D, E, F, G, H, I;
+		function SingleNumber(a, b) {
+			return (parseInt(String(a) + String(b)));
+		}
+		for (A = 0; A < 10; A++) {
+			for (B = 0; B < 10; B++) {
+				if (A == B) continue;
+				for (C = 0; C < 10; C++) {
+					if (A == C || B == C || (SingleNumber(A, B) - C < 0)) continue;
+					for (D = 0; D < 10; D++) {
+						if (A == D || B == D || C == D) continue;
+						for (E = 0; E < 10; E++) {
+							if (A == E || B == E || C == E || D == E) continue;
+							for (F = 1; F < 10; F++) {
+								if (A == F || B == F || C == F || D == F || E == F ||
+									(Math.floor(SingleNumber(D, E) / F)) != (SingleNumber(D, E) / F)) continue;
+									for (G = 0; G < 10; G++) {
+										if (A == G || B == G || C == G || D == G
+											|| E == G || F == G) continue;
+										for (H = 0; H < 10; H++) {
+											if (A == H || B == H || C == H || D == H
+												|| E == H || F == H || G == H) continue;
+											for (I = 0; I < 10; I++) { // numbers with zeros in their beginning
+											/*for (I = 1; I < 10; I++) { // numbers without zeros in their beginning*/
+												if (A == I || B == I || C == I || D == I
+													|| E == I || F == I || G == I || H == I
+													|| (SingleNumber(G, H) * I) > 99) continue;
+												if ((SingleNumber(A, B) - C == SingleNumber(D, E) / F)
+													&& (SingleNumber(D, E) / F == SingleNumber(G, H) * I)) {
+													document.write("<p>" + SingleNumber(A, B) + " - " + C + " = " + SingleNumber(D, E) + 
+															" &divide; " + F + " = " + SingleNumber(G, H) + " &times; " + I + "</p>");
+												}
+										}
+									}	
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	</script>
+</body>
+</html>
