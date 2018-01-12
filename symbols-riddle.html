@@ -160,57 +160,17 @@
 			$("#result").html(result);
 			$("p").css("display", "none");
 		}
-		function default_settings() {
-			for (let i = 0; i < 5; i++) {
-				let selector = "#c" + i + " select";
-				$(selector).val(0);
-			}
-		}
-		function sum_values() {
-			var sum = 0;
-			for (let i = 0; i < 5; i++) {
-				let selector = "#c" + i + " select";
-				if ($(selector).val() > 0) {
-					sum++;
-				}
-			}
-			if (sum != 5) {
-
-				return false;
-			}
-			else return true;
-		}
-		function get_values_arr() {
-			var arr = [];
-			for (let i = 0; i < 5; i++) {
-				let selector = "#c" + i + " select";
-				arr[i] = parseInt($(selector).val());
-			}
-
-			return arr;
-		}
-
 		function check_equation() {
-			if (sum_values()) {
-				//console.log($("#result").text());
-				if (false) {
-					alert("Congrats! You've won!");
-					var new_game = true;
-				} else {var new_game = confirm("Almost! New map?");}
-				if (new_game) {
-					location.reload();
-				} else {
-					default_settings();
-				}
+			if (true) {
+				console.log(1);
+				$("#c3 select").val(2);
 			}
-			else alert("Set All the Comand.");
 		}
 		set_task(get_input(txt));
 		$("select").change(function(){
-		    //console.log($(this).val());
-		    console.log(get_values_arr());
+		    if($(this).val() == 0) return false;
 		    
-		    //console.log($(this).parent().attr("id"));
+		    console.log($(this).val());
 		});
 		document.getElementById("equal").onclick = check_equation;
 		document.getElementById("answer").onclick = solve_task;
