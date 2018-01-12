@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Square Riddle</title>
+	<style>
+		table {
+			border-collapse: collapse;
+			border-color: black;
+		}
+		td {
+			text-align: center;
+			vertical-align: middle;
+			min-width: 40px;
+			height: 40px;
+		}
+		.start, .finish {
+			background-color: yellow;
+		}
+		.touched {
+			background-color: red;
+		}
+		.hidden {
+			display: none !important; 
+		}
+		table {
+			margin: 0 auto;
+		}
+		div {
+			margin: 0 auto;
+			text-align: center;
+			max-width: 360px;
+		}
+		#again, #new_map {
+			display: inline-block;
+			margin-top: 15px;
+		}
+	</style>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+	<!-- Comment -->
+	<!-- It has to be automated way to solve this riddle, but due to my job it bacame visual way to solve.
+		Playground generates automatically.-->
+	<div >
+		<p>You have to pave the way from "In" to "Out" in that way, when the sum of all the selected cells equals 100. You may point the next cells only from the right or from the bottom of previous one. Have fun!
+			<br/>
+			<button autofocus id = "understand">Understand</button></p>
+	</div>
+	<div class="hidden" id = "playground">
+		<table border="1">
+			<tr>
+				<td class = "start touched" id = "c0">In</td>
+				<td id = "c1">29</td>
+				<td id = "c2">11</td>
+				<td id = "c3">27</td>
+				<td id = "c4">13</td>
+			</tr>
+			<tr>
+				<td id = "c10">12</td>
+				<td id = "c11">7</td>
+				<td id = "c12">18</td>
+				<td id = "c13">28</td>
+				<td id = "c14">15</td>
+			</tr>
+			<tr>
+				<td id = "c20">9</td>
+				<td id = "c21">1</td>
+				<td id = "c22">7</td>
+				<td id = "c23">11</td>
+				<td id = "c24">27</td>
+			</tr>
+			<tr>
+				<td id = "c30">10</td>
+				<td id = "c31">27</td>
+				<td id = "c32">16</td>
+				<td id = "c33">4</td>
+				<td id = "c34">9</td>
+			</tr>
+			<tr>
+				<td id = "c40">21</td>
+				<td id = "c41">9</td>
+				<td id = "c42">9</td>
+				<td id = "c43">3</td>
+				<td class = "finish" id = "c44">Out</td>
+			</tr>
+			<tr>
+				<td class = "t_footer" colspan = "2">Sum:</td>
+				<td class = "t_footer" colspan = "3" id = "result">0</td>
+			</tr>
+		</table>
+	<div class="button_div hidden">
+		<button id = "again">Try Again</button>
+		<button id = "new_map">New Map</button>
+	</div>
+	</div>
+	<script>
+		$("#understand").click(function() {
+			$(this).parent().addClass("hidden");
+			$("#playground").removeClass("hidden");
+		});
+		var counter = 0;
+		var flag = true;
+		$( "td" ).click(function() {
+			var incr_counter = (parseInt($(this).attr("id").substr(1)));
+			if (!($(this).hasClass("touched")) && !($(this).hasClass("finish")) && !($(this).hasClass("t_footer")) &&
+				((incr_counter - counter == 10) || (incr_counter - counter == 1))
+				) {
+			$(this).addClass("touched");
+			var result = parseInt($("#result").text());
+			result += parseInt($(this).text());
+			$("#result").html(result);
+			counter = incr_counter;
+			}
+		});
+		function checkOut() {
+			if (($("#c43").hasClass("touched")) || ($("#c34").hasClass("touched"))) {
+				if (parseInt($("#result").text())  == 100) {
+					alert("Congrats! You've won.");
+					location.reload();
+				} else {
+					alert("Almost! Try again.");	
+				}
+				$(".button_div").removeClass("hidden");
+				$("table").addClass("hidden");
+				$("#again").focus();
+			}
+		}
+		$(".finish").click(function() {
+			checkOut();
+		});
+		$("#new_map").click(function() {
+			location.reload();
+		});
+		$("#again").click(function() {
+			$(".button_div").addClass("hidden");
+			$("table").removeClass("hidden");
+			$("td").removeClass("touched");
+			$("#c0").addClass("touched");
+			counter = 0;
+			flag = true;
+			$("#result").html(0);
+		});
+
+		function get_sum (arr) {
+			var result = 0;
+			for (var i = 0; i < arr.length; i++) {
+				if (arr[i] == null) continue;
+				result += arr[i];
+			}
+			return result;
+		}
+		$(document).ready(function() {
+			var path_arr = [];
+			for (let i = 0; i < 7; i++) {
+				if (i < 2) {
+					path_arr.push(Math.floor(Math.random() * 29 + 1));
+				} else if (i < 6) {
+					path_arr.push(Math.floor(Math.random() * ((99 - get_sum(path_arr))/(6 - i)) + 1));
+				} else {
+					path_arr.push(100 - get_sum(path_arr));
+				}
+			}
+			var cell = 0;
+			function generate_step (cell) {
+				var delta;
+				if (cell >= 40) {
+					delta = 1;
+				} else if (cell % 10 > 3) {
+					delta = 10;
+				} else if (Math.random() < 0.5) {
+					delta = 1;
+				} else delta = 10;
+
+					return (cell + delta);
+			}
+			for (let i = 0; i < 5; i++) {
+				for (let j = 0; j < 5; j++) {
+					$("#c"+parseInt(i * 10 + j)).html(parseInt(Math.random() * 29 + 1));
+					if (i == 0 && j == 0) {
+						$("#c"+parseInt(i * 10 + j)).html("In");
+					}
+					if (i == 4 && j == 4) {
+						$("#c"+parseInt(i * 10 + j)).html("Out");
+					}
+				}
+			}
+			for (let i = 0; i < 7; i++) {
+				cell = generate_step (cell);
+				let path = "#c" + cell;
+				$(path).html(path_arr[i]);
+			}
+
+			//Keyboard control Events Start
+			function manual_step() {
+				let result = parseInt($("#result").text());
+	                   	let new_cell = "#c"+counter;
+						//result += parseInt($(new_cell).text());
+						if ($(new_cell).text() == parseInt($(new_cell).text())) {
+							result += parseInt($(new_cell).text());
+							$("#result").html(result);
+							flag = false;
+							checkOut();
+							$(new_cell).addClass("touched");
+						} else {
+							flag = false;
+							checkOut();
+						}	
+			}
+			$( document ).keydown(
+	            function( e ){
+	                if( e.keyCode == 39 && flag 
+	                	&& !($("table").hasClass("hidden"))
+	                	&& !($("#playground").hasClass("hidden"))
+	                	&& (counter % 10 < 4)) {
+	                	counter += 1;
+	                   	manual_step();
+	                }
+	            });
+	        $( document ).keydown(
+	            function( e ){
+	                if( e.keyCode == 40 && flag 
+	                	&& !($("table").hasClass("hidden"))
+	                	&& !($("#playground").hasClass("hidden"))
+	                	&& (counter < 40)){
+	                	counter += 10;
+	                   	manual_step();	                    
+	                }
+	            });
+	        $( document ).keyup(
+	            function( e ){
+	                if( e.keyCode == 39 ||  e.keyCode == 40){
+	                    flag = true;
+	                    //checkOut();
+	                }
+	        });
+			//Keyboard control Events End
+		});
+	</script>
+</body>
+</html>

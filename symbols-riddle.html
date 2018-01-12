@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Symbols Riddle</title>
+	<script src="jquery.min.js"></script>
+</head>
+<body>
+	<table>
+		<tr>
+			<td id = "n0">Num_0</td>
+			<td id = "c0">
+				<select>
+				    <option value="0">CMD</option>
+				    <option value="1">+</option>
+				    <option value="2">-</option>
+				    <option value="3">*</option>
+				    <option value="4">/</option>
+				</select>
+			</td>	
+			<td id = "n1">Num_1</td>
+			<td id = "c1">
+				<select>
+				    <option value="0">CMD</option>
+				    <option value="1">+</option>
+				    <option value="2">-</option>
+				    <option value="3">*</option>
+				    <option value="4">/</option>
+				</select>
+			</td>	
+			<td id = "n2">Num_2</td>
+			<td id = "c2">
+				<select>
+				    <option value="0">CMD</option>
+				    <option value="1">+</option>
+				    <option value="2">-</option>
+				    <option value="3">*</option>
+				    <option value="4">/</option>
+				</select>
+			</td>	
+			<td id = "n3">Num_3</td>
+			<td id = "c3">
+				<select>
+				    <option value="0">CMD</option>
+				    <option value="1">+</option>
+				    <option value="2">-</option>
+				    <option value="3">*</option>
+				    <option value="4">/</option>
+				</select>
+			</td>	
+			<td id = "n4">Num_4</td>
+			<td id = "c4">
+				<select>
+				    <option value="0">CMD</option>
+				    <option value="1">+</option>
+				    <option value="2">-</option>
+				    <option value="3">*</option>
+				    <option value="4">/</option>
+				</select>
+			</td>	
+			<td id = "n5">Num_5</td>
+			<td id = "equal"><button id = "equal">=</button></td>
+			<td id = "result">Result</td>
+		</tr>
+	</table>
+	<button id = "answer">Show Answer(s)</button>
+	<script>
+		function generate_definitions() {
+			var definition_arr = [Math.round(Math.random()*8 + 1)];
+			var right_cells = Math.round(Math.random()*5);
+			for (let i = 1; i <= right_cells; i++) {
+				if (definition_arr[definition_arr.length - 1] < 9) {
+					definition_arr.push(definition_arr[definition_arr.length - i] + i);
+				}
+			}
+			var left_cells = 6 - definition_arr.length;
+			for (let i = 0; i < left_cells; i++) {
+				if (definition_arr[0] > 1) {
+					definition_arr.unshift(definition_arr[0] - 1);
+				} else {
+					definition_arr.push(definition_arr[definition_arr.length - 1] + 1);
+				}
+			}
+
+			return definition_arr;
+		}
+
+		function compareRandom(a, b) {
+
+		  return Math.random() - 0.5;
+		}
+		function unique(arr) {
+				var obj = {};
+				for (var i = 0; i < arr.length; i++) {
+					var str = arr[i];
+					obj[str] = true;
+				}
+
+				return Object.keys(obj);
+		}
+		function get_input(string) {
+			var input_arr = string.split(" ? ");
+			var last_definition = input_arr[input_arr.length - 1].split(" = ");
+			var result = parseInt(last_definition[1]);
+			input_arr[input_arr.length - 1] = last_definition[0];
+
+			return [input_arr, result];
+		}
+		function generate_task() {
+			var input_arr = generate_definitions().sort(compareRandom);		
+			var all_comands = ["+", "-", "*", "/"];
+			var comand_arr = all_comands.slice().sort(compareRandom);
+			comand_arr.push(all_comands[Math.round(Math.random()*3)]);
+			var result = eval(input_arr[0]+comand_arr[0]+input_arr[1]+comand_arr[1]+
+										input_arr[2]+comand_arr[2]+input_arr[3]+comand_arr[3]+
+										input_arr[4]+comand_arr[4]+input_arr[5]);
+			if (result == parseInt(result)) {
+				document.write("<p>" + input_arr[0] + " ? " + input_arr[1]  + " ? "+ input_arr[2]  + " ? " + input_arr[3] + " ? " + input_arr[4] + " ? " + input_arr[5] + " = " + result + "</p>");
+			} else {
+				location.reload();
+			}
+		}
+		function solve_task() {
+			var txt = document.getElementsByTagName("p")[0].innerHTML;
+			var input_arr = get_input(txt)[0];
+			var result = get_input(txt)[1];
+			var comand_arr = ["+", "-", "*", "/"];
+			var replace_arr = ["+", "-", "&times;", "&divide;"];
+			
+			
+			for (let i = 0; i < comand_arr.length; i++) {
+				for (let j = 0; j < comand_arr.length; j++) {
+					for (let k = 0; k < comand_arr.length; k++) {
+						for (let l = 0; l < comand_arr.length; l++) {
+							for (let m = 0; m < comand_arr.length; m++) {
+								if (eval(input_arr[0]+comand_arr[i]+input_arr[1]+comand_arr[j]+
+										input_arr[2]+comand_arr[k]+input_arr[3]+comand_arr[l]+
+										input_arr[4]+comand_arr[m]+input_arr[5]) == result &&
+									unique([comand_arr[i], comand_arr[j], comand_arr[k], comand_arr[l], comand_arr[m]]).length == 4) {
+									document.write("<p>"+input_arr[0]+" "+replace_arr[i]+" "+input_arr[1]+" "+replace_arr[j]+" "+input_arr[2]+" "+replace_arr[k]+" "+input_arr[3]+" "+replace_arr[l]+" "+input_arr[4]+" "+replace_arr[m]+" "+input_arr[5]
+										+" = "+result+"</p>");
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		generate_task();
+		var txt = document.getElementsByTagName("p")[0].innerHTML;
+		function set_task(arr) {
+			var number_arr = arr[0];
+			var result = arr[1];
+			console.log(number_arr);
+			console.log(result);
+			for (let i = 0; i < number_arr.length; i++) {
+				let number_selector = "#n" + i;
+				$(number_selector).html(number_arr[i]);
+			}
+			$("#result").html(result);
+			$("p").css("display", "none");
+		}
+		function default_settings() {
+			for (let i = 0; i < 5; i++) {
+				let selector = "#c" + i + " select";
+				$(selector).val(0);
+			}
+		}
+		function sum_values() {
+			var sum = 0;
+			for (let i = 0; i < 5; i++) {
+				let selector = "#c" + i + " select";
+				if ($(selector).val() > 0) {
+					sum++;
+				}
+			}
+			if (sum != 5) {
+
+				return false;
+			}
+			else return true;
+		}
+		function get_values_arr() {
+			var arr = [];
+			for (let i = 0; i < 5; i++) {
+				let selector = "#c" + i + " select";
+				arr[i] = parseInt($(selector).val());
+			}
+
+			return arr;
+		}
+
+		function check_equation() {
+			if (sum_values()) {
+				//console.log($("#result").text());
+				if (false) {
+					alert("Congrats! You've won!");
+					var new_game = true;
+				} else {var new_game = confirm("Almost! New map?");}
+				if (new_game) {
+					location.reload();
+				} else {
+					default_settings();
+				}
+			}
+			else alert("Set All the Comand.");
+		}
+		set_task(get_input(txt));
+		$("select").change(function(){
+		    //console.log($(this).val());
+		    console.log(get_values_arr());
+		    
+		    //console.log($(this).parent().attr("id"));
+		});
+		document.getElementById("equal").onclick = check_equation;
+		document.getElementById("answer").onclick = solve_task;
+	</script>
+
+</body>
+</html>

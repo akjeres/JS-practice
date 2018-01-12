@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Roses Riddle</title>
+	<!-- Description -->
+	<!--There ia a riddle. You have to form a buquet with three kinds of roses and you have particular amount of money. There is a questions: how many roses of each color with fixed price will you use?-->
+	<!-- Solution -->
+	<!--1. We have to find all the combinations of buquets out. But there will be possible solutions with some zeros in them.
+	2. After cutting out combinations with zeros there might be few correct variants. We have to choose only one solution in which all the amounts of flowers are about to similar.
+	3. The variant with the most similar amount of flowers is required. -->
+</head>
+<body>
+<script>
+	function no_zeros(arr) {
+		var temp = [];
+		for (var i = 0; i < arr.length; i++){
+			if (arr[i] == 0) break;
+			temp.push(arr[i]);
+		}
+		if (temp.length == arr.length) return temp;
+	}
+	function compareNumeric(a, b) {
+	  return a - b;
+	}
+	function find_delta (arr) {
+		var delta = 0;
+		for (var i = 0; i < arr.length; i++) {
+			for (var j = 0; j < arr.length; j++) {
+				if (i == j) continue;
+				delta += Math.abs(arr[i] - arr[j]);
+			}
+		}
+		return delta;
+	}
+	function min_delta (arr) {
+		var delta_arr = [];
+		for (var i = 0; i < arr.length; i++) {
+			delta_arr.push(find_delta(arr[i]));
+		};
+		
+		var delta_arr_sorted = delta_arr.slice().sort(compareNumeric);
+		var min_diff = delta_arr_sorted[0];
+		return arr[delta_arr.indexOf(min_diff)];
+	}
+	function match_bouquet(prices_arr) {
+		var red_price = prices_arr[0];
+		var pink_price = prices_arr[1];
+		var blue_price = prices_arr[2];
+		var total_price = prices_arr[3];
+		var matched_comb = [];
+		var red, pink, blue; 
+		for (blue = 0; blue < Math.ceil(total_price / blue_price); blue++) {
+			for (pink = 0; pink < Math.ceil(total_price / pink_price); pink++) {
+				for (red = 0; red < Math.ceil(total_price / red_price); red++) {
+					if ((red*red_price + pink*pink_price + blue*blue_price == total_price)
+						&& ((red + pink + blue)%2 != 0) && no_zeros([red, pink, blue])) {
+						matched_comb.push([red, pink, blue]);
+					}
+				}
+			}
+		}
+		if (matched_comb.length) return min_delta(matched_comb);
+	}
+	//var colors = ["Red", "Pink", "Blue"];
+	function visualize_results (color_arr, quantity_arr) {
+		if (quantity_arr) {
+			for (var i = 0; i < quantity_arr.length; i++) {
+				document.write("<p><span style = 'color: " + color_arr[i].toLowerCase() +"'>" + color_arr[i] + ": </span>"
+					+ quantity_arr[i] +"</p>");
+			}
+		} else document.write("No matches");
+		
+	}	
+	
+	var colors = [];
+	var prices = [];
+	colors[0] = prompt("Set the first flower color", "Red");
+	prices[0] = +prompt("Set the first flower price", 1.8);
+	colors[1] = prompt("Set the second flower color", "Pink");
+	prices[1] = +prompt("Set the second flower price", 2.5);
+	colors[2] = prompt("Set the third flower color", "Blue");
+	prices[2] = +prompt("Set the third flower price", 3.5);
+	prices[3] = +prompt("Set the total price", 42.0);
+	visualize_results(colors, match_bouquet(prices));
+	
+	
+
+	
+</script>
+</body>
+</html>
