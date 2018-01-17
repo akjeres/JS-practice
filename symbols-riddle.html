@@ -145,14 +145,34 @@
 					}
 				}
 			}
+			document.write("<title>Symbols Riddle</title>");
 		}
-		generate_task();
-		var txt = document.getElementsByTagName("p")[0].innerHTML;
+		function disable_value(exception, number) {
+			var selector_0, selector_1, selector_2, selector_3;
+			if (Array.isArray(exception)) {
+				selector_0 = exception[0];
+				selector_1 = exception[1];
+				selector_2 = exception[2];
+				selector_3 = exception[3];
+
+			}	else selector_0 = exception;
+			if (parseInt(number)) {
+				for (let i = 0; i < 5; i++) {
+					if (i == selector_0 || i == selector_1 ||
+						i == selector_2 || i == selector_3) continue;
+					$("#c" + i + " option[value = " + number + "]").attr("disabled", "disabled");
+				}
+			}
+		}
+		function enable_value(number) {
+			for (let i = 0; i < 5; i++) {
+				$("#c" + i + " option[value = " + number + "]").removeAttr("disabled");
+			}
+		}
+
 		function set_task(arr) {
 			var number_arr = arr[0];
 			var result = arr[1];
-			console.log(number_arr);
-			console.log(result);
 			for (let i = 0; i < number_arr.length; i++) {
 				let number_selector = "#n" + i;
 				$(number_selector).html(number_arr[i]);
@@ -160,18 +180,112 @@
 			$("#result").html(result);
 			$("p").css("display", "none");
 		}
-		function check_equation() {
-			if (true) {
-				console.log(1);
-				$("#c3 select").val(2);
+		function set_defaults() {
+			for (let i = 0; i < 5; i++) {
+				$("#c" + i + " select").val(0);
+				enable_value(i);
 			}
+			c0 = c1 = c2 = c3 = c4 = undefined;
+			counter = 0;
 		}
-		set_task(get_input(txt));
+		function check_equation() {
+			var left_side = "";
+			var selector;
+			for (let i = 0; i < 5; i++) {
+				selector = "#c" + i + " select";
+				left_side += ($("#n" + i).text() + comand_arr[$(selector).val()]);
+			}
+			left_side += $("#n5").text();
+			if (c0 && c1 && c2 && c3 && c4) {
+				if (get_unique_length([c0, c1, c2, c3, c4]) != 4) {
+					alert("Only one comands match is possible. Try again.");
+				} else {
+				if (eval(left_side) == parseInt($("#result").text())) {
+					alert("Congrats! You've won!");
+					location.reload();
+				} else {
+					if (confirm("Almost! \n" + left_side + " = " + eval(left_side) + "\n"+
+						"Try the new task?")) {
+						location.reload();
+					}
+				}}
+				set_defaults();				
+			} else alert("Set all the comands.");
+		}
+		
 		$("select").change(function(){
-		    if($(this).val() == 0) return false;
+		    var selector = $(this).parent().prop("id").substring(1);
+		    var selected_arr = [c0, c1, c2, c3, c4];
+		    var t = parseInt($(this).val());
+		    if (selector == 0) {
+		    	if (!c0) counter++;
+		    	else enable_value(c0);
+		    	selected_arr[0] = c0 = parseInt($(this).val());
+		    }
+		    if (selector == 1) {
+		    	if (!c1) counter++;
+		    	else enable_value(c1);
+		    	selected_arr[1] = c1 = parseInt($(this).val());
+		    }
+		    if (selector == 2) {
+		    	if (!c2) counter++;
+		    	else enable_value(c2);
+		    	selected_arr[2] = c2 = parseInt($(this).val());
+		    }
+		    if (selector == 3) {
+		    	if (!c3) counter++;
+		    	else enable_value(c3);
+		    	selected_arr[3] = c3 = parseInt($(this).val());
+		    }
+		    if (selector == 4) {
+		    	if (!c4) counter++;
+		    	else enable_value(c4);
+		    	selected_arr[4] = c4 = parseInt($(this).val());
+		    }
+		    if ($(this).val() == 0) {
+		    	counter--;
+		    }
 		    
-		    console.log($(this).val());
+		    for (let i = 0; i < 5; i++) {
+		    	let t;
+		    	if (parseInt(unique(selected_arr)[i])) {
+		    		t = parseInt(unique(selected_arr)[i]);
+		    		if (selected_arr.indexOf(t) != selected_arr.lastIndexOf(t)) {
+		    			let first_index = selected_arr.indexOf(t);
+			    		let last_index = selected_arr.lastIndexOf(t);
+			    		disable_value([first_index, last_index], selected_arr[first_index]);
+		    		} 
+		    	}
+		    	
+		    }
+		
+			
+			
 		});
+		function compareNumeric(a, b) {
+		  if (a > b) return 1;
+		  if (a < b) return -1;
+		}
+		function get_unique_length(array) {
+			for (let i = 0; i < array.length; i++) {
+				if (Number.isNaN(parseInt(array[i]))) array[i] = 0;
+				array[i] = parseInt(array[i]);
+			}
+			array.sort(compareNumeric);
+			array.splice(0, array.lastIndexOf(0) + 1);
+			
+			return unique(array).length;
+		}
+
+
+
+
+		generate_task();
+		var txt = document.getElementsByTagName("p")[0].innerHTML;
+		var c0, c1, c2, c3, c4;
+		var comand_arr = [, "+", "-", "*", "/"];
+		var counter = 0;
+		set_task(get_input(txt));
 		document.getElementById("equal").onclick = check_equation;
 		document.getElementById("answer").onclick = solve_task;
 	</script>
